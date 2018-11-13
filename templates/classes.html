@@ -1,0 +1,227 @@
+{% extends 'index.html' %}
+
+
+{% block css %}
+    <style>
+        .hide{
+            display: none;
+        }
+        .change-modal{
+            position: fixed;
+            top: 250px;
+            left: 550px;
+            width: 300px;
+            height: 200px;
+            background-color: darkcyan;
+            z-index: 100;
+        }
+
+        .delete-modal{
+            position: fixed;
+            top: 250px;
+            left: 550px;
+            width:155px;
+            height:40px;
+            background-color: darkslategray;
+            z-index: 100;
+        }
+
+        .page-num-location .page{
+            display: inline-block;
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+
+        .page-num-location .page.active{
+            background-color: black;
+            color: white;
+        }
+
+
+    </style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+    <div class="modal hide">
+        <div class="modal-window">
+            <input type="text" placeholder="班级名称" name="new_class_name" id="class_name"><br>
+            <input type="button" value="确认" id="confirm_event">   <!--模态对话框中的取消和确定事件按钮-->
+            <input type="button" value="取消" id="cancel_event">
+        </div>
+
+    </div>
+
+    <div class="shade hide"></div>
+
+    <div class="change-modal hide">   <!--点击编辑后出现的模态对话框中的事件-->
+        <input type="text" placeholder="新的班级名称" id="new_class_name">
+        <input type="button" value="确认" id="change_modal_confirm">
+        <input type="button" value="取消" id="change_modal_cancel">
+    </div>
+
+    <div class="delete-modal hide">    <!--点击删除会出现的模态对话框中的事件-->
+        <input type="button" value="确定" id="delete_modal_confirm">
+        <input type="button" value="取消" id="delete_modal_cancel">
+    </div>
+    <h1>班级管理</h1>
+    <input type="button" id="add_class" value="添加班级">
+
+    <div>          <!--显示数据库内容-->
+        <table border="1px">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>班级</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                    {% for classes in classes_list %}
+                        <tr>
+                            <td>{{ classes.id }}</td>
+                            <td>{{ classes.name }}</td>
+                            <td><input type="button" value="编辑" class="change-content"> | <input type="button" value="删除" class="delete-content"></td>
+                        </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="page-num-location">    <!--页码区域-->
+
+        {{ page_statement|safe }}
+    </div>
+{% endblock %}
+
+
+{% block javasript %}
+    <script>
+        $(
+            function(){
+                addClasses();
+                confirmEvent();
+                cancelEvent();
+                changeContent();
+                deleteContent();
+                changeCancel();
+                changeConfirm();
+                deleteCancel();
+                deleteConfirm();
+                ajaxSubmit();
+
+            }
+        );
+
+        function addClasses(){    // 监控添加按钮点击事件，出现模态对话框
+            $('#add_class').click(function(){
+                $('.modal, .shade').removeClass('hide');
+            })
+        }
+
+        function confirmEvent(){
+            $('#confirm_event').click(function(){   // 点击确定按钮，模态对话框消失
+                $('.modal, .shade').addClass('hide');
+            })
+        }
+
+        function cancelEvent(){
+            $('#cancel_event').click(function(){
+                $('.modal, .shade').addClass('hide');  // 点击取消按钮也是会隐藏模态对话框
+            })
+        }
+
+        function changeContent(){   // 点击编辑按钮出现相应的模态对话框，当使用ajax局部添加标签的时候也可以将相应的事件同时绑定
+            $('table').on('click', '.change-content', function(){
+                $('.shade, .change-modal').removeClass('hide');
+            })
+        }
+
+        function deleteContent(){   // 删除事件按钮的监控, 使用on可以实现事件委托
+            $('table').on('click', '.delete-content',
+                function(){
+                    $('.shade, .delete-modal').removeClass('hide');
+                }
+            )
+        }
+
+        function changeCancel(){   // 点击取消，隐藏对话窗口
+            $('#change_modal_cancel').click(function(){
+                $('.shade, .change-modal').addClass('hide');
+            })
+        }
+
+        function changeConfirm(){   // 点击确定按钮隐藏模态对话框
+            $('#change_modal_confirm').click(function(){
+                $('.shade, .change-modal').addClass('hide');
+            })
+        }
+
+        function deleteCancel(){   // 隐藏模态对话框
+            $('#delete_modal_cancel').click(function(){
+                $('.shade, .delete-modal').addClass('hide');
+            })
+        }
+
+        function deleteConfirm(){    //点击删除按钮窗口中的确定事件
+            $('#delete_modal_confirm').click(function(){
+                $('.shade, .delete-modal').addClass('hide');
+
+            })
+        }
+
+        function ajaxSubmit(){     // 把用户输入的需要添加的班级名称使用ajax的方式发送到后端进行操作
+            $('#confirm_event').click(function(){
+                var SubmitValue = $('#class_name').val();   // 获取用户输入的内容
+                // console.log(SubmitValue);
+                $.ajax({
+                    url:'/classes/',
+                    type:'POST',
+                    dataType:'JSON',
+                    data:{class_name: SubmitValue},
+                    success: function(req){
+                        // console.log(req);
+                        if(req.status){
+                            // console.log('yes');
+                            var tr = document.createElement('tr');
+                            var td1 = document.createElement('td');
+                            var td2 = document.createElement('td');
+                            var td3 = document.createElement('td');
+                            var b1 = document.createElement('button');
+                            var b2 = document.createElement('button');
+                            td3.innerText = ' | ';
+                            b1.innerText = '编辑';
+                            b1.className = 'change-content';
+                            b2.innerText = '删除';
+                            b2.className = 'delete-content';
+                            td1.innerText = req.data.id;
+                            td2.innerText = req.data.name;
+
+                            // 建立每个标签之间的关系
+                            td3.prepend(b1);
+                            td3.append(b2);
+                            tr.append(td1);
+                            tr.append(td2);
+                            tr.append(td3);
+                            $('table tbody').append(tr);
+                        }
+                        else{
+                            // console.log('no');
+                            var error_msg = req.error;    // 如果接受内容为空就alert错误信息
+                            alert(error_msg);
+                        }
+                    }
+
+                })
+            })
+        }
+
+
+
+
+    </script>
+{% endblock %}

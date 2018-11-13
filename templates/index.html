@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+
+    <style>
+        .top-menu{
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background-color: blue;
+            color: white;
+        }
+
+        .left-menu{
+            position: absolute;
+            top: 100px;
+            left:0;
+            bottom: 0;
+            width: 200px;
+            background-color: darkcyan;
+            color: black;
+
+        }
+
+        .right-menu{
+            position: absolute;
+            top: 100px;
+            right: 0;
+            left: 200px;
+            bottom: 0;
+            background-color: dodgerblue;
+            color: darkslategray;
+        }
+
+        .login-static{
+            float: right;
+            width: 200px;
+            height: 100px;
+        }
+
+        .login-success-words{
+            margin-left: 300px;
+        }
+
+        .left-menu .item{
+            display: block;
+            padding: 10px 20px;
+            border-bottom: 1px solid black;
+            font-size: 22px;
+        }
+
+        .left-menu .item:hover{
+            background-color: black;
+        }
+
+        .hide{
+            display: none;
+        }
+        .modal{
+            position: fixed;
+            top: 250px;
+            left: 550px;
+            width: 300px;
+            height: 200px;
+            background-color: darkcyan;
+            z-index: 100;
+        }
+
+
+        .shade{
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 99;
+            opacity: 0.5;
+            background-color: black;
+        }
+        .modal-window{
+            margin-top: 50px;
+            margin-left: 60px;
+
+        }
+
+        {% block css %}
+
+        {% endblock %}
+    </style>
+</head>
+<body>
+    <h1>欢迎登陆</h1>
+
+    <!--顶部菜单-->
+    <div class="top-menu">
+        <div class="login-static">
+            <p>用户：{{ name }}</p>
+            <p>登录成功</p>
+        </div>
+
+        <div class="login-success-words">
+            <h1>上善若水  厚德载物</h1>
+        </div>
+    </div>
+
+    <!--左菜单-->
+    <div class="left-menu">
+        <div class="item"><a href="/student/" id="item_student">学生管理</a></div>
+        <div class="item"><a href="/teacher/" id="item_teacher">教师管理</a></div>
+        <div class="item"><a href="/classes/" id="item_class">班级管理</a></div>
+    </div>
+
+    <!--右菜单-->
+    <div class="right-menu">
+        {% block content %}
+            <h1>后台信息管理系统</h1>
+        {% endblock %}
+    </div>
+
+
+    <script src="/static/jquery-3.3.1.min.js/"></script>
+
+
+    {% block javasript %}
+
+    {% endblock %}
+
+
+
+</body>
+</html>

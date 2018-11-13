@@ -1,0 +1,41 @@
+{% extends 'index.html' %}
+
+
+{% block css %}
+
+{% endblock %}
+
+
+
+{% block content %}
+    <h1>学生管理</h1>
+    <input type="button" id="add_student" value="添加学生">
+    <div>
+        <table border="1px">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>学生</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for student in student_list %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.name }}</td>
+                        <td><input type="button" value="编辑"> | <input type="button" value="删除"></td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+
+{% block javasript %}
+
+{% endblock %}
